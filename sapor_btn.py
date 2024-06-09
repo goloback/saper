@@ -9,27 +9,27 @@ class ButtonSapor(Button):
         self.index_nearst_btn = []
         self.count_touch_bomb = 0
         self.btn_check = False
-    def show_figure(self, value):
+    def put_and_up_flag(self, value):
         self['text'] = value
-        self.text_print(str(value))
-        self.config(relief=SUNKEN)
-    def text_print(self, text):
+        self.print_count_bomb(str(value))
+    def print_count_bomb(self, text):
         self.config(text=text)
-        if text.isdigit() == True:
-            if text == '1':
+        str_text = str(text)
+        if str_text.isdigit() == True:
+            if str_text == '1':
                 self.config(fg='red')
-            if text == '2':
+            if str_text == '2':
                 self.config(fg='blue')
-            if text == '3':
+            if str_text == '3':
                 self.config(fg='green')
-            if text == '4':
+            if str_text == '4':
                 self.config(fg='purple')
-            if text == '5':
+            if str_text == '5':
                 self.config(fg='orange')
-            if text == '6':
+            if str_text == '6':
                 self.config(fg='yellow')
-            if text == '7':
+            if str_text == '7':
                 self.config(fg='springgreen')
-            if text == '8':
+            if str_text == '8':
                 self.config(fg='silver')
-        self.config(relief=SUNKEN)
+        self.config(relief=GROOVE)

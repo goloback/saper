@@ -100,7 +100,7 @@ def bomb_touch():
                 if btn_list[i].is_bomb == True:
                     btn.count_touch_bomb += 1
         #btn.show_figure(btn.count_touch_bomb)
-def click_left(event):
+def click_left(event, btn=None):
     global start_game, update_time_click
     if start_game is None:
         start_game = True
@@ -109,23 +109,53 @@ def click_left(event):
             update_time_click = True
     if start_game == False:
         return
-    index = event.widget.index-1
+    if event is not None:
+        index = event.widget.index-1
+    else:
+        index=btn.index-1
+    if btn_list[index]['text']=='🚩':
+        return
+    print (btn_list[index]['relief'])
+    if btn_list[index]['relief']==SUNKEN or btn_list[index]['relief']==GROOVE:
+        all_clear(btn_list[index])
     btn_list[index].btn_check = True
     if btn_list[index].is_bomb == False:
-        btn_list[index].text_print(str(btn_list[index].count_touch_bomb))
+        btn_list[index].print_count_bomb(str(btn_list[index].count_touch_bomb))
     if btn_list[index].count_touch_bomb == 0:
         btn0(index)
     if check_win() == True:
         print('win')
+        start_game=False
     if btn_list[index].is_bomb == True:
         start_game = False
         for flag in btn_list:
             if flag.is_bomb == True:
-                flag.text_print('💣')
-
+                flag.put_and_up_flag('💣')
+def all_clear(btn):
+    if btn.count_touch_bomb!=0:
+        flags = 0
+        for i in btn.index_nearst_btn:
+            if btn_list[i]['text']=='🚩':
+                flags+=1
+        if flags==btn.count_touch_bomb:
+            for i in btn.index_nearst_btn:
+                if btn_list[i].btn_check == True:
+                    continue
+                if btn_list[i]['text'] != '🚩':
+                    click_left(event=None, btn=btn_list[i])
 def click_right(event):
     global flags_count
+    global start_game, update_time_click
+    if start_game==False:
+        return
+    if start_game is None:
+        start_game = True
+        if update_time_click == False:
+            update_time()
+            update_time_click = True
     index = event.widget.index-1
+    if btn_list[index]['relief']==GROOVE:
+        return
     if btn_list[index]['text'] == '':
         btn_list[index]['text']='🚩'
         flags_count += 1
@@ -133,16 +163,20 @@ def click_right(event):
     else:
         btn_list[index]['text'] = ''
         flags_count -= 1
-    canvas.itemconfigure(text_count_bombs, text = bomb_count - flags_count)
+    canvas.itemconfigure(text_count_bombs, text=bomb_count - flags_count)
 
 def btn0(index):
+    global flags_count
     for i in btn_list[index].index_nearst_btn:
         if btn_list[i].btn_check == True:
             continue
-        btn_list[i].show_figure(btn_list[i].count_touch_bomb)
+        if btn_list[i]['text']=='🚩':
+            flags_count-=1
+            canvas.itemconfigure(text_count_bombs, text=bomb_count - flags_count)
+        btn_list[i].print_count_bomb(btn_list[i].count_touch_bomb)
         btn_list[i].btn_check = True
         if btn_list[i].count_touch_bomb == 0 and btn_list[i].is_bomb == False:
-            btn_list[i].show_figure(0)
+            btn_list[i].print_count_bomb(0)
             btn0(i)
 
 def create_bomb():
