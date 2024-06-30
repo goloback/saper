@@ -3,6 +3,9 @@ from sapor_btn import ButtonSapor
 from random import randint
 from datetime import datetime
 import threading
+from date_information import data_base
+from best import *
+from win_table import win_table
 def check_win():
     for btn in btn_list:
         if btn.is_bomb == False and btn.btn_check == False:
@@ -125,6 +128,7 @@ def click_left(event, btn=None):
         btn0(index)
     if check_win() == True:
         print('win')
+        win_table(DB, level, game_time)
         start_game=False
     if btn_list[index].is_bomb == True:
         start_game = False
@@ -192,24 +196,27 @@ def apply_bomb():
             btn.is_bomb = True
 
 def click_beginner():
-    global count_rows, count_cols, bomb_count
+    global count_rows, count_cols, bomb_count, level
     count_rows = 9
     count_cols = 9
     bomb_count = 10
+    level = 'beginner'
     create_gameplay()
 
 def click_intermediate():
-    global count_rows, count_cols, bomb_count
+    global count_rows, count_cols, bomb_count, level
     count_rows = 16
     count_cols = 16
     bomb_count = 40
+    level = 'intermediate'
     create_gameplay()
 
 def click_expert():
-    global count_rows, count_cols, bomb_count
+    global count_rows, count_cols, bomb_count, level
     count_rows = 20
     count_cols = 18
     bomb_count = 99
+    level = 'expert'
     create_gameplay()
 
 def create_gameplay():
@@ -247,9 +254,18 @@ def update_time():
     window.after(1000, update_time)
 
 
+def open_best_result(event):
+    level = event.widget['text']
+    players_results(level, DB)
+
+DB = data_base()
+DB.create_table_information()
+DB.print_all_information()
 update_time_click = False
 start_game = None
 window = Tk()
+window.title('сапёр')
+level = 'beginner'
 count_rows = 12
 count_cols = 12
 bomb_count = count_cols*count_rows//12
@@ -260,10 +276,13 @@ canvas = Canvas(window, width=count_cols*45, height=50, bg='#5F1540')
 canvas.grid(row=1, column=0, columnspan=count_cols)
 text_count_bombs = canvas.create_text(5, 5, anchor=NW, text=bomb_count, fill='#cd0000', font=(None, 25))
 beginner = Button(canvas, bg='grey', fg='white', font=(None, 15), text='beginner', command=click_beginner)
+beginner.bind('<Button-3>', open_best_result)
 beginner.place(x=45, y=7)
 Intermediate = Button(canvas, bg='grey', fg='white', font=(None, 15), text='Intermediate', command=click_intermediate)
+Intermediate.bind('<Button-3>', open_best_result)
 Intermediate.place(x=140, y=7)
 expert = Button(canvas, bg='grey', fg='white', font=(None, 15), text='expert', command=click_expert)
+expert.bind('<Button-3>', open_best_result)
 expert.place(x=270, y=7)
 timer = canvas.create_text(360, 5, anchor=NW, text='00', fill='#cd0000', font=(None, 25))
 btn_list = []
