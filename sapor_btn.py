@@ -1,4 +1,6 @@
 from tkinter import *
+from tkinter import font
+
 
 class ButtonSapor(Button):
     def __init__(self, master=None, cnf={}, **kw):
@@ -15,6 +17,8 @@ class ButtonSapor(Button):
     def print_count_bomb(self, text):
         self.config(text=text)
         str_text = str(text)
+        btn_font = font.Font(weight="bold", size=9)
+        self.config(font=btn_font)
         if str_text.isdigit() == True:
             if str_text == '1':
                 self.config(fg='red')

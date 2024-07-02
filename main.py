@@ -104,7 +104,7 @@ def bomb_touch():
                     btn.count_touch_bomb += 1
         #btn.show_figure(btn.count_touch_bomb)
 def click_left(event, btn=None):
-    global start_game, update_time_click
+    global start_game, update_time_click, open_win_table
     if start_game is None:
         start_game = True
         if update_time_click == False:
@@ -128,13 +128,16 @@ def click_left(event, btn=None):
         btn0(index)
     if check_win() == True:
         print('win')
-        win_table(DB, level, game_time)
+        if open_win_table == False:
+            win_table(DB, level, game_time-1)
+            open_win_table = True
         start_game=False
     if btn_list[index].is_bomb == True:
         start_game = False
         for flag in btn_list:
             if flag.is_bomb == True:
                 flag.put_and_up_flag('💣')
+
 def all_clear(btn):
     if btn.count_touch_bomb!=0:
         flags = 0
@@ -145,7 +148,7 @@ def all_clear(btn):
             for i in btn.index_nearst_btn:
                 if btn_list[i].btn_check == True:
                     continue
-                if btn_list[i]['text'] != '🚩':
+                if btn_list[i]['text'] != '🚩' :
                     click_left(event=None, btn=btn_list[i])
 def click_right(event):
     global flags_count
@@ -220,7 +223,8 @@ def click_expert():
     create_gameplay()
 
 def create_gameplay():
-    global start_game, flags_count, game_time
+    global start_game, flags_count, game_time, open_win_table
+    open_win_table = False
     game_time = 0
     canvas.itemconfigure(timer, text=0)
     start_game = None
@@ -258,6 +262,7 @@ def open_best_result(event):
     level = event.widget['text']
     players_results(level, DB)
 
+open_win_table = False
 DB = data_base()
 DB.create_table_information()
 DB.print_all_information()
