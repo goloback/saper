@@ -8,12 +8,13 @@ class win_table():
 
     def create_window(self):
         self.window = Tk()
+        self.validate_function = self.window.register(self.validation)
         self.window.title("you won")
         self.canvas = Canvas(self.window, width=350, height=250, bg='gray')
         self.canvas.pack()
         self.window.resizable(0, 0)
         self.canvas.create_text(50, 20, text='write your name', anchor=NW, font=(None, 25), fill='#5F1540')
-        self.entry = Entry(self.canvas, font=(None, 25), width=17)
+        self.entry = Entry(self.canvas, font=(None, 25), width=17, validate='key', validatecommand=(self.validate_function, '%P'))
         self.entry.place(x=20, y=80)
         self.btn = Button(self.canvas, font=(None, 25), text='save', command=self.click_save)
         self.btn.place(x=130, y=170)
@@ -26,6 +27,9 @@ class win_table():
             nickname = self.entry.get()
             self.data.insert_info(nickname, self.level, self.time)
             self.window.destroy()
-
-
+    def validation(self, text):
+        if text == ' ':
+            return False
+        else:
+            return True
 #object_table = win_table(None, 'beginner', 43)
